@@ -44,35 +44,22 @@ function createFilters(filters) {
 createFilters(filters);
 
 // Gestion des filtres
-const btnAll = document.querySelector("[data-category-id='0']");
-const btnObjects = document.querySelector("[data-category-id='1']");
-const btnApartments = document.querySelector("[data-category-id='2']");
-const btnRestaurants = document.querySelector("[data-category-id='3']");
+const filterButtons = document.querySelectorAll("[data-category-id]");
 
-btnAll.addEventListener("click", () => {
-	document.getElementById("js-gallery").innerHTML = "";
-	createGallery(works);
-});
+filterButtons.forEach((btn) => {
+	btn.addEventListener("click", () => {
+		const categoryId = parseInt(btn.getAttribute("data-category-id"));
+		let filteredProjects;
+		if (categoryId === 0) {
+			filteredProjects = works;
+		} else {
+			filteredProjects = works.filter(function (work) {
+				return work.categoryId === categoryId;
+			});
+		}
 
-btnObjects.addEventListener("click", () => {
-	const filteredProjects = works.filter(function (work) {
-		return work.categoryId === 1;
-	});
-	document.getElementById("js-gallery").innerHTML = "";
-	createGallery(filteredProjects);
-});
+		document.getElementById("js-gallery").innerHTML = "";
 
-btnApartments.addEventListener("click", () => {
-	const filteredProjects = works.filter(function (work) {
-		return work.categoryId === 2;
+		createGallery(filteredProjects);
 	});
-	document.getElementById("js-gallery").innerHTML = "";
-	createGallery(filteredProjects);
-});
-btnRestaurants.addEventListener("click", () => {
-	const filteredProjects = works.filter(function (work) {
-		return work.categoryId === 3;
-	});
-	document.getElementById("js-gallery").innerHTML = "";
-	createGallery(filteredProjects);
 });
