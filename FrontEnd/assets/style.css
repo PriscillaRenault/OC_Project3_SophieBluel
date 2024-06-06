@@ -112,6 +112,11 @@ ol,
 ul {
 	list-style: none;
 }
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
 blockquote,
 q {
 	quotes: none;
@@ -133,7 +138,11 @@ body {
 	margin: auto;
 	font-family: "Work Sans";
 	font-size: 14px;
+	display: grid;
+	grid-template-rows: 1fr auto 1fr;
+	height: 100vh;
 }
+
 header {
 	display: flex;
 	justify-content: space-between;
@@ -176,8 +185,13 @@ nav li {
 
 li:hover {
 	color: #b1663c;
+	cursor: pointer;
 }
-#introduction {
+.selected {
+	font-weight: bold;
+}
+
+li:s #introduction {
 	display: flex;
 	align-items: center;
 }
@@ -238,33 +252,33 @@ li:hover {
 .gallery img {
 	width: 100%;
 }
-#contact {
+.forms {
 	width: 50%;
 	margin: auto;
 }
-#contact > * {
+.forms > * {
 	text-align: center;
 }
-#contact h2 {
+.forms h2 {
 	margin-bottom: 20px;
 }
-#contact form {
+.forms form {
 	text-align: left;
 	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
 }
 
-#contact input {
+.forms input {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact label {
+.forms label {
 	margin: 2em 0 1em 0;
 }
-#contact textarea {
+.forms textarea {
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
@@ -278,6 +292,12 @@ input[type="submit"] {
 	width: 180px;
 	text-align: center;
 	border-radius: 60px;
+}
+
+footer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: flex-end;
 }
 
 footer nav ul {
