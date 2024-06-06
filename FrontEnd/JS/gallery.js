@@ -1,17 +1,21 @@
-//Récupération des travaux depuis l'API
+// Retrieve fonctions
+import { selectedNavItem } from "./login.js";
+//change weight of the selected item in navbar
+selectedNavItem();
+
+//Retrieve works from the API
 const reponse = await fetch("http://localhost:5678/api/works/");
 const works = await reponse.json();
-console.log(works);
 
+//Retrieve filters gallery from the API
 const reponsefilter = await fetch("http://localhost:5678/api/categories/");
 const filters = await reponsefilter.json();
-console.log(filters);
 
-// Création de la galerie
+// Create gallery
 function createGallery(works) {
+	const gallery = document.getElementById("js-gallery");
 	for (let i = 0; i < works.length; i++) {
 		const project = works[i];
-		const gallery = document.getElementById("js-gallery");
 		const projectElement = document.createElement("figure");
 		const projectImg = document.createElement("img");
 		projectImg.src = project.imageUrl;
@@ -26,13 +30,10 @@ function createGallery(works) {
 }
 createGallery(works);
 
-// Création des filtres
+// Create filters buttons
 function createFilters(filters) {
 	const filter = document.getElementById("js-filters");
-	const filterAll = document.createElement("button");
-	filterAll.textContent = "Tous";
-	filterAll.dataset.categoryId = "0";
-	filter.appendChild(filterAll);
+	filters.unshift({ id: 0, name: "All" });
 	for (let i = 0; i < filters.length; i++) {
 		const category = filters[i];
 		const filterElement = document.createElement("button");
@@ -43,7 +44,7 @@ function createFilters(filters) {
 }
 createFilters(filters);
 
-// Gestion des filtres
+// manage filters
 const filterButtons = document.querySelectorAll("[data-category-id]");
 
 filterButtons.forEach((btn) => {
