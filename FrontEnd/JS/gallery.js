@@ -1,8 +1,3 @@
-// Retrieve fonctions
-import { selectedNavItem } from "./login.js";
-//change weight of the selected item in navbar
-selectedNavItem();
-
 //Retrieve works from the API
 const reponse = await fetch("http://localhost:5678/api/works/");
 const works = await reponse.json();
@@ -13,7 +8,7 @@ const filters = await reponsefilter.json();
 
 // Create gallery
 function createGallery(works) {
-	const gallery = document.getElementById("js-gallery");
+	const gallery = document.querySelector("#js-gallery");
 	for (let i = 0; i < works.length; i++) {
 		const project = works[i];
 		const projectElement = document.createElement("figure");
@@ -32,7 +27,7 @@ createGallery(works);
 
 // Create filters buttons
 function createFilters(filters) {
-	const filter = document.getElementById("js-filters");
+	const filter = document.querySelector("#js-filters");
 	filters.unshift({ id: 0, name: "All" });
 	for (let i = 0; i < filters.length; i++) {
 		const category = filters[i];
@@ -59,7 +54,7 @@ filterButtons.forEach((btn) => {
 			});
 		}
 
-		document.getElementById("js-gallery").innerHTML = "";
+		document.querySelector("#js-gallery").innerHTML = "";
 
 		createGallery(filteredProjects);
 	});

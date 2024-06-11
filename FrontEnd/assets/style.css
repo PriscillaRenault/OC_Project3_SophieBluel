@@ -305,3 +305,9 @@ footer nav ul {
 	justify-content: flex-end;
 	margin: 2em;
 }
+
+.edition {
+	background-color: black;
+	color: white;
+	height: 60px;
+}
