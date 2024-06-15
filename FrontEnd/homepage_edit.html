@@ -10,18 +10,26 @@
 			href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
 			rel="stylesheet"
 		/>
+		<script
+			src="https://kit.fontawesome.com/f30ebbf9c0.js"
+			crossorigin="anonymous"
+		></script>
 		<meta name="description" content="" />
 		<link rel="stylesheet" href="./assets/style.css" />
-		<script type="module" src="./JS/gallery.js" defer></script>
+		<script type="module" src="./JS/galleryEdit.js" defer></script>
+		<script type="module" src="./JS/modal.js" defer></script>
 	</head>
 	<body>
-		<div class="edition"><p>Mode édition</p></div>
+		<div class="edition">
+			<i class="fa-regular fa-pen-to-square"></i>
+			<p>Mode édition</p>
+		</div>
 		<header>
 			<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 			<nav>
 				<ul>
 					<li class="navLink">
-						<a href="index.html" class="selected">projets</a>
+						<a href="index.html">projets</a>
 					</li>
 					<li class="navLink"><a href="#contact">contact</a></li>
 					<li class="navLink"><a href="login.html"> logout</a></li>
@@ -61,7 +69,14 @@
 				</article>
 			</section>
 			<section id="portfolio">
-				<h2>Mes Projets</h2>
+				<div class="portfolio-title">
+					<h2>Mes Projets</h2>
+					<div class="project-modif" id="js-project-modif">
+						<i class="fa-regular fa-pen-to-square"></i>
+						<p>modifier</p>
+					</div>
+				</div>
+
 				<div class="gallery" id="js-gallery"></div>
 			</section>
 			<section id="contact" class="forms">
@@ -91,5 +106,6 @@
 				</ul>
 			</nav>
 		</footer>
+		<dialog id="js-dialog"></dialog>
 	</body>
 </html>
