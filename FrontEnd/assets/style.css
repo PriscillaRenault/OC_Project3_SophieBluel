@@ -184,6 +184,10 @@ nav li {
 	font-size: 1.2em;
 }
 
+.selected {
+	font-weight: bold;
+}
+
 li:hover {
 	color: #b1663c;
 }
