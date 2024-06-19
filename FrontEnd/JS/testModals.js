@@ -193,6 +193,7 @@ const createModalAddPhoto = () => {
 	const btnAddPhoto = document.createElement("input");
 	btnAddPhoto.type = "submit";
 	btnAddPhoto.value = "Envoyer";
+	btnAddPhoto.classList.add("invalid");
 	dialog.appendChild(titleDialog);
 	dialog.appendChild(formAddPhoto);
 	formAddPhoto.appendChild(containerPhoto);

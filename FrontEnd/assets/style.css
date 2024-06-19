@@ -451,3 +451,10 @@ footer nav ul {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 	color: grey;
 }
+.invalid {
+	background-color: #a7a7a7;
+}
+.valid {
+	background-color: #1d6154;
+	color: white;
+}
