@@ -17,6 +17,6 @@ document.querySelector("#js-btnSubmit").addEventListener("click", async (e) => {
 		alert("E-mail ou mot de passe incorrect");
 	} else {
 		sessionStorage.setItem("token", data.token);
-		window.location.href = "../FrontEnd/homepage_edit.html";
+		window.location.href = "./homepage_edit.html";
 	}
 });

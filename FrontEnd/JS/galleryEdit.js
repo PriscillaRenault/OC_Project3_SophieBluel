@@ -3,7 +3,7 @@ const reponse = await fetch("http://localhost:5678/api/works/");
 const works = await reponse.json();
 
 // Create gallery
-function createGallery(works) {
+export function createGallery(works) {
 	const gallery = document.querySelector("#js-gallery");
 	for (let i = 0; i < works.length; i++) {
 		const project = works[i];
