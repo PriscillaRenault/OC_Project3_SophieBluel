@@ -288,8 +288,6 @@ li:hover {
 input[type="submit"] {
 	font-family: "Syne";
 	font-weight: 700;
-	color: white;
-	background-color: #1d6154;
 	margin: 3em auto;
 	padding: 0.5rem 1rem;
 	width: 180px;
@@ -354,9 +352,13 @@ footer nav ul {
 .gallery-mini,
 .formAddPhoto {
 	display: flex;
-	border-bottom: 1px solid #b3b3b3;
 	margin: auto;
+}
+
+.gallery-mini,
+.formAddPhoto .containerCategory {
 	padding-bottom: 60px;
+	border-bottom: 1px solid #b3b3b3;
 }
 
 .gallery-mini {
@@ -442,6 +444,10 @@ footer nav ul {
 .containerPhoto p {
 	font-size: 10px;
 }
+.containerPhoto img {
+	height: 100%;
+	object-fit: cover;
+}
 
 .containerTitleCategory {
 	display: flex;
@@ -458,10 +464,11 @@ footer nav ul {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 	color: grey;
 }
-.invalid {
+.secondary {
 	background-color: #a7a7a7;
+	color: white;
 }
-.valid {
+.primary {
 	background-color: #1d6154;
 	color: white;
 }
