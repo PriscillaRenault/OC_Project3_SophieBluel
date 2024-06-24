@@ -1,14 +1,8 @@
-import { fetchWorks, deleteWork } from "./api.js";
+import { fetchWorks, deleteWork, checkFormAddPhoto } from "./api.js";
 import { createGallery } from "./galleryEdit.js";
-import { checkFormAddPhoto } from "./api.js";
 
-let titleDialog;
-let headerModal;
-let closeBtn;
-let returnArrow;
 let works;
 
-// Fonction de fermeture de la modal
 export const closeModal = (event) => {
 	event.preventDefault();
 	const dialog = document.querySelector("#js-dialog");
@@ -17,107 +11,58 @@ export const closeModal = (event) => {
 	dialog.classList.add("hidden");
 };
 
-// Fonction de base pour initialiser la modal
 export const baseModal = () => {
 	const dialog = document.querySelector("#js-dialog");
 	dialog.classList.remove("hidden");
 	dialog.classList.add("dialog");
 	dialog.innerHTML = "";
 
-	headerModal = document.createElement("div");
+	const headerModal = createHeaderModal();
+	dialog.appendChild(headerModal);
+};
+
+const createHeaderModal = () => {
+	const headerModal = document.createElement("div");
 	headerModal.classList.add("headerModal");
 
-	returnArrow = document.createElement("span");
+	const returnArrow = document.createElement("span");
 	returnArrow.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
 	returnArrow.classList.add("returnArrow");
 
-	closeBtn = document.createElement("span");
+	const closeBtn = document.createElement("span");
 	closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
 	closeBtn.classList.add("xmark");
 	closeBtn.addEventListener("click", closeModal);
 
-	titleDialog = document.createElement("h2");
-	titleDialog.textContent = "";
+	const titleDialog = document.createElement("h2");
 
-	dialog.appendChild(headerModal);
 	headerModal.appendChild(returnArrow);
 	headerModal.appendChild(closeBtn);
-	dialog.appendChild(titleDialog);
+	headerModal.appendChild(titleDialog);
+
+	return headerModal;
 };
 
 const updateReturnArrow = () => {
 	const returnArrow = document.querySelector(".returnArrow");
-	if (returnArrow.parentElement.classList.contains("headerGallery")) {
-		returnArrow.innerHTML = "";
-	} else {
-		returnArrow.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
-		returnArrow.addEventListener("click", createModalGallery);
-	}
+	returnArrow.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+	returnArrow.addEventListener("click", createModalGallery);
 };
 
-// Fonction pour créer la modal de galerie
 export const createModalGallery = async () => {
 	baseModal();
 	const dialog = document.querySelector("#js-dialog");
+	const headerModal = dialog.querySelector(".headerModal");
 	headerModal.classList.add("headerGallery");
-	titleDialog = dialog.querySelector("h2");
+
+	const titleDialog = dialog.querySelector("h2");
 	titleDialog.textContent = "Galerie photo";
 
-	// Récupérer les travaux via l'API
 	works = await fetchWorks();
-
-	const galleryMini = document.createElement("div");
-	galleryMini.classList.add("gallery-mini");
-	galleryMini.id = "js-galleryMini";
-
-	works.forEach((project) => {
-		const projectElement = document.createElement("figure");
-		projectElement.dataset.id = project.id;
-
-		const projectImg = document.createElement("img");
-		projectImg.src = project.imageUrl;
-		projectImg.alt = project.title;
-
-		const trashIcon = document.createElement("span");
-		trashIcon.classList.add("js-trashIcon", "js-trashIcon");
-		// trashIcon.setAttribute("dataset", trashIcon);
-		trashIcon.innerHTML =
-			'<i class="fa-solid fa-trash-can js-trashIcon trashIcon"></i>';
-
-		galleryMini.appendChild(projectElement);
-		projectElement.appendChild(projectImg);
-		projectElement.appendChild(trashIcon);
-	});
-
+	const galleryMini = createGalleryMini(works);
 	dialog.appendChild(galleryMini);
+
 	updateReturnArrow();
-
-	galleryMini.addEventListener("click", async (event) => {
-		if (event.target.classList.contains("js-trashIcon")) {
-			event.preventDefault();
-			const projectElement = event.target.closest("figure");
-			const id = projectElement.dataset.id;
-			const token = sessionStorage.getItem("token");
-			if (!token) {
-				console.log("No token");
-				return;
-			}
-
-			try {
-				const response = await deleteWork(id, token);
-				if (response.ok) {
-					projectElement.remove();
-					updateMainGallery();
-				} else {
-					console.log(
-						`Error ${response.status} ${response.statusText}`
-					);
-				}
-			} catch (error) {
-				console.error("Error during fetch: ", error);
-			}
-		}
-	});
 
 	const btnAddPhoto = document.createElement("input");
 	btnAddPhoto.type = "submit";
@@ -130,6 +75,67 @@ export const createModalGallery = async () => {
 	});
 };
 
+const createGalleryMini = (works) => {
+	const galleryMini = document.createElement("div");
+	galleryMini.classList.add("gallery-mini");
+	galleryMini.id = "js-galleryMini";
+
+	works.forEach((project) => {
+		const projectElement = createProjectElement(project);
+		galleryMini.appendChild(projectElement);
+	});
+
+	galleryMini.addEventListener("click", async (event) => {
+		if (event.target.classList.contains("js-trashIcon")) {
+			event.preventDefault();
+			await handleDelete(event);
+		}
+	});
+
+	return galleryMini;
+};
+
+const createProjectElement = (project) => {
+	const projectElement = document.createElement("figure");
+	projectElement.dataset.id = project.id;
+
+	const projectImg = document.createElement("img");
+	projectImg.src = project.imageUrl;
+	projectImg.alt = project.title;
+
+	const trashIcon = document.createElement("span");
+	trashIcon.classList.add("js-trashIcon", "trashIcon");
+	trashIcon.innerHTML =
+		'<i class="fa-solid fa-trash-can js-trashIcon trashIcon"></i>';
+
+	projectElement.appendChild(projectImg);
+	projectElement.appendChild(trashIcon);
+
+	return projectElement;
+};
+
+const handleDelete = async (event) => {
+	const projectElement = event.target.closest("figure");
+	const id = projectElement.dataset.id;
+	const token = sessionStorage.getItem("token");
+	if (!token) {
+		console.log("No token");
+		return;
+	}
+
+	try {
+		const response = await deleteWork(id, token);
+		if (response.ok) {
+			projectElement.remove();
+			updateMainGallery();
+		} else {
+			console.log(`Error ${response.status} ${response.statusText}`);
+		}
+	} catch (error) {
+		console.error("Error during fetch: ", error);
+	}
+};
+
 const updateMainGallery = async () => {
 	const gallery = document.querySelector("#js-gallery");
 	gallery.innerHTML = "";
@@ -137,7 +143,6 @@ const updateMainGallery = async () => {
 	createGallery(works);
 };
 
-// Function to create the modal to add a photo
 export const createModalAddPhoto = () => {
 	baseModal();
 	const dialog = document.querySelector("#js-dialog");
@@ -145,19 +150,44 @@ export const createModalAddPhoto = () => {
 	titleDialog.textContent = "Ajout Photo";
 	dialog.appendChild(titleDialog);
 
+	const formAddPhoto = createFormAddPhoto();
+	dialog.appendChild(formAddPhoto);
+
+	updateReturnArrow();
+};
+
+const createFormAddPhoto = () => {
 	const formAddPhoto = document.createElement("form");
 	formAddPhoto.classList.add("formAddPhoto");
 	formAddPhoto.id = "js-formAddPhoto";
 
+	const containerPhoto = createContainerPhoto();
+	const containerTitle = createContainerTitle();
+	const containerCategory = createContainerCategory();
+	const btnSendNewPhoto = createBtnSendNewPhoto();
+
+	formAddPhoto.appendChild(containerPhoto);
+	formAddPhoto.appendChild(containerTitle);
+	formAddPhoto.appendChild(containerCategory);
+	formAddPhoto.appendChild(btnSendNewPhoto);
+
+	formAddPhoto.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		await checkFormAddPhoto();
+		updateMainGallery();
+	});
+
+	return formAddPhoto;
+};
+
+const createContainerPhoto = () => {
 	const containerPhoto = document.createElement("div");
 	containerPhoto.classList.add("containerPhoto");
 
-	// SVG initial
 	const svgPhoto = document.createElement("svg");
 	svgPhoto.classList.add("svgPhoto");
 	svgPhoto.innerHTML = '<i class="fa-regular fa-image"></i>';
 
-	// Image preview initialement cachée
 	const imgPreview = document.createElement("img");
 	imgPreview.classList.add("imgPreview");
 	imgPreview.classList.add("hidden");
@@ -172,7 +202,6 @@ export const createModalAddPhoto = () => {
 	inputPhoto.name = "image";
 	inputPhoto.id = "image";
 
-	// Ajout du gestionnaire d'événements pour l'aperçu de l'image
 	inputPhoto.addEventListener("change", () => {
 		const file = inputPhoto.files[0];
 		const maxSize = 4 * 1024 * 1024;
@@ -191,95 +220,101 @@ export const createModalAddPhoto = () => {
 				imgPreview.src = e.target.result;
 				imgPreview.alt = "Image preview";
 				imgPreview.classList.remove("hidden");
-				imgPreview.classList.add("show"); // Afficher l'aperçu de l'image
+				imgPreview.classList.add("show");
 				svgPhoto.classList.add("hidden");
 				labelPhoto.classList.add("hidden");
-				textSizePhoto.classList.add("hidden"); // Masquer le SVG
+				textSizePhoto.classList.add("hidden");
 			};
 			reader.readAsDataURL(file);
 		}
 	});
 
-	const containerTitle = document.createElement("div");
-	containerTitle.classList.add("containerTitleCategory");
-	const labelTitle = document.createElement("label");
-	labelTitle.htmlFor = "title";
-	labelTitle.textContent = "Titre";
-	labelTitle.classList.add("labelTitleCategory");
-	const inputTitle = document.createElement("input");
-	inputTitle.type = "text";
-	inputTitle.name = "title";
-	inputTitle.id = "title";
-	inputTitle.classList.add("inputTitleCategory");
-
-	const containerCategory = document.createElement("div");
-	containerCategory.classList.add("containerTitleCategory");
-	containerCategory.classList.add("containerCategory");
-	const labelCategory = document.createElement("label");
-	labelCategory.htmlFor = "category";
-	labelCategory.textContent = "Catégorie";
-	labelCategory.classList.add("labelTitleCategory");
-	const selectCategory = document.createElement("select");
-	selectCategory.name = "category";
-	selectCategory.id = "category";
-	selectCategory.innerHTML = `
-        <option value="0"></option>
-        <option value="1">Objets</option>
-        <option value="2">Appartements</option>
-        <option value="3">Hotels et restaurants</option>
-    `;
-	selectCategory.classList.add("inputTitleCategory");
-
-	const btnSendNewPhoto = document.createElement("input");
-	btnSendNewPhoto.type = "submit";
-	btnSendNewPhoto.value = "Valider";
-	btnSendNewPhoto.classList.add("secondary");
-	btnSendNewPhoto.disabled = true;
-
-	formAddPhoto.appendChild(containerPhoto);
 	containerPhoto.appendChild(svgPhoto);
 	containerPhoto.appendChild(imgPreview);
 	containerPhoto.appendChild(labelPhoto);
 	containerPhoto.appendChild(inputPhoto);
 	containerPhoto.appendChild(textSizePhoto);
 
-	formAddPhoto.appendChild(containerTitle);
+	return containerPhoto;
+};
+
+const createContainerTitle = () => {
+	const containerTitle = document.createElement("div");
+	containerTitle.classList.add("containerTitleCategory");
+
+	const labelTitle = document.createElement("label");
+	labelTitle.htmlFor = "title";
+	labelTitle.textContent = "Titre";
+	labelTitle.classList.add("labelTitleCategory");
+
+	const inputTitle = document.createElement("input");
+	inputTitle.type = "text";
+	inputTitle.name = "title";
+	inputTitle.id = "title";
+	inputTitle.classList.add("inputTitleCategory");
+
 	containerTitle.appendChild(labelTitle);
 	containerTitle.appendChild(inputTitle);
 
-	formAddPhoto.appendChild(containerCategory);
+	return containerTitle;
+};
+
+const createContainerCategory = () => {
+	const containerCategory = document.createElement("div");
+	containerCategory.classList.add("containerTitleCategory");
+	containerCategory.classList.add("containerCategory");
+
+	const labelCategory = document.createElement("label");
+	labelCategory.htmlFor = "category";
+	labelCategory.textContent = "Catégorie";
+	labelCategory.classList.add("labelTitleCategory");
+
+	const selectCategory = document.createElement("select");
+	selectCategory.name = "category";
+	selectCategory.id = "category";
+	selectCategory.innerHTML = `
+		<option value="0"></option>
+		<option value="1">Objets</option>
+		<option value="2">Appartements</option>
+		<option value="3">Hotels et restaurants</option>
+	`;
+	selectCategory.classList.add("inputTitleCategory");
+
 	containerCategory.appendChild(labelCategory);
 	containerCategory.appendChild(selectCategory);
 
-	formAddPhoto.appendChild(btnSendNewPhoto);
+	return containerCategory;
+};
 
-	dialog.appendChild(formAddPhoto);
+const createBtnSendNewPhoto = () => {
+	const btnSendNewPhoto = document.createElement("input");
+	btnSendNewPhoto.type = "submit";
+	btnSendNewPhoto.value = "Valider";
+	btnSendNewPhoto.classList.add("secondary");
+	btnSendNewPhoto.disabled = true;
 
-	updateReturnArrow();
+	btnSendNewPhoto.addEventListener("click", checkFields);
 
-	const checkfields = () => {
-		if (
-			inputPhoto.files.length !== 0 &&
-			inputTitle.value.length !== 0 &&
-			selectCategory.value !== "0"
-		) {
-			btnSendNewPhoto.disabled = false;
-			btnSendNewPhoto.classList.remove("secondary");
-			btnSendNewPhoto.classList.add("primary");
-		} else {
-			btnSendNewPhoto.disabled = true;
-			btnSendNewPhoto.classList.remove("primary");
-			btnSendNewPhoto.classList.add("secondary");
-		}
-	};
+	return btnSendNewPhoto;
+};
 
-	inputPhoto.addEventListener("change", checkfields);
-	inputTitle.addEventListener("input", checkfields);
-	selectCategory.addEventListener("change", checkfields);
+const checkFields = () => {
+	const inputPhoto = document.querySelector("#image");
+	const inputTitle = document.querySelector("#title");
+	const selectCategory = document.querySelector("#category");
+	const btnSendNewPhoto = document.querySelector(".secondary");
 
-	formAddPhoto.addEventListener("submit", async (event) => {
-		event.preventDefault();
-		await checkFormAddPhoto();
-		updateMainGallery();
-	});
+	if (
+		inputPhoto.files.length > 0 &&
+		inputTitle.value.trim() !== "" &&
+		selectCategory.value !== "0"
+	) {
+		btnSendNewPhoto.disabled = false;
+		btnSendNewPhoto.classList.remove("secondary");
+		btnSendNewPhoto.classList.add("primary");
+	} else {
+		btnSendNewPhoto.disabled = true;
+		btnSendNewPhoto.classList.remove("primary");
+		btnSendNewPhoto.classList.add("secondary");
+	}
 };
