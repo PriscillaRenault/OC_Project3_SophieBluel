@@ -288,8 +288,6 @@ li:hover {
 input[type="submit"] {
 	font-family: "Syne";
 	font-weight: 700;
-	color: white;
-	background-color: #1d6154;
 	margin: 3em auto;
 	padding: 0.5rem 1rem;
 	width: 180px;
@@ -458,10 +456,11 @@ footer nav ul {
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 	color: grey;
 }
-.invalid {
+.secondary {
 	background-color: #a7a7a7;
+	color: white;
 }
-.valid {
+.primary {
 	background-color: #1d6154;
 	color: white;
 }

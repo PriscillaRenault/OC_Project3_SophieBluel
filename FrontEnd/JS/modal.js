@@ -1,11 +1,14 @@
 import { fetchWorks, deleteWork } from "./api.js";
 import { createGallery } from "./galleryEdit.js";
+import { checkFormAddPhoto } from "./newGalleryElt.js";
 
 let titleDialog;
 let headerModal;
 let closeBtn;
 let returnArrow;
 let works;
+let btnSendNewPhoto;
+
 // Fonction de fermeture de la modal
 export const closeModal = (event) => {
 	event.preventDefault();
@@ -120,6 +123,7 @@ export const createModalGallery = async () => {
 	const btnAddPhoto = document.createElement("input");
 	btnAddPhoto.type = "submit";
 	btnAddPhoto.value = "Ajouter une photo";
+	btnAddPhoto.classList.add("primary");
 	dialog.appendChild(btnAddPhoto);
 	btnAddPhoto.addEventListener("click", (event) => {
 		event.preventDefault();
@@ -134,11 +138,11 @@ const updateMainGallery = async () => {
 	createGallery(works);
 };
 
-// Fonction pour créer la modal d'ajout de photo
+// Function to create the modal to add a photo
 export const createModalAddPhoto = () => {
 	baseModal();
 	const dialog = document.querySelector("#js-dialog");
-	titleDialog = dialog.querySelector("h2");
+	const titleDialog = dialog.querySelector("h2");
 	titleDialog.textContent = "Ajout Photo";
 	dialog.appendChild(titleDialog);
 
@@ -154,12 +158,13 @@ export const createModalAddPhoto = () => {
 	const textSizePhoto = document.createElement("p");
 	textSizePhoto.textContent = "jpg, png : 4mo max";
 	const labelPhoto = document.createElement("label");
-	labelPhoto.htmlFor = "photo";
+	labelPhoto.htmlFor = "image";
 	labelPhoto.textContent = "+ Ajouter photo";
 	const inputPhoto = document.createElement("input");
 	inputPhoto.type = "file";
-	inputPhoto.name = "photo";
-	inputPhoto.id = "photo";
+	inputPhoto.name = "image";
+	inputPhoto.id = "image";
+	inputPhoto.setAttribute("data-js-photo", "true");
 
 	const containerTitle = document.createElement("div");
 	containerTitle.classList.add("containerTitleCategory");
@@ -179,21 +184,21 @@ export const createModalAddPhoto = () => {
 	labelCategory.htmlFor = "category";
 	labelCategory.textContent = "Catégorie";
 	labelCategory.classList.add("labelTitleCategory");
-	const selectcategory = document.createElement("select");
-	selectcategory.name = "category";
-	selectcategory.id = "category";
-	selectcategory.innerHTML = `
+	const selectCategory = document.createElement("select");
+	selectCategory.name = "category";
+	selectCategory.id = "category";
+	selectCategory.innerHTML = `
         <option value="0"></option>
         <option value="1">Objets</option>
         <option value="2">Appartements</option>
         <option value="3">Hotels et restaurants</option>
     `;
-	selectcategory.classList.add("inputTitleCategory");
+	selectCategory.classList.add("inputTitleCategory");
 
-	const btnSubmit = document.createElement("input");
-	btnSubmit.type = "submit";
-	btnSubmit.value = "Valider";
-	btnSubmit.classList.add("invalid");
+	const btnSendNewPhoto = document.createElement("input");
+	btnSendNewPhoto.type = "submit";
+	btnSendNewPhoto.value = "Valider";
+	btnSendNewPhoto.classList.add("secondary");
 
 	formAddPhoto.appendChild(containerPhoto);
 	containerPhoto.appendChild(svgPhoto);
@@ -207,10 +212,16 @@ export const createModalAddPhoto = () => {
 
 	formAddPhoto.appendChild(containerCategory);
 	containerCategory.appendChild(labelCategory);
-	containerCategory.appendChild(selectcategory);
+	containerCategory.appendChild(selectCategory);
+
+	formAddPhoto.appendChild(btnSendNewPhoto);
 
 	dialog.appendChild(formAddPhoto);
-	dialog.appendChild(btnSubmit);
 
 	updateReturnArrow();
+
+	formAddPhoto.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		await checkFormAddPhoto();
+	});
 };
