@@ -1,13 +1,12 @@
 import { fetchWorks, deleteWork } from "./api.js";
 import { createGallery } from "./galleryEdit.js";
-import { checkFormAddPhoto } from "./newGalleryElt.js";
+import { checkFormAddPhoto } from "./api.js";
 
 let titleDialog;
 let headerModal;
 let closeBtn;
 let returnArrow;
 let works;
-let btnSendNewPhoto;
 
 // Fonction de fermeture de la modal
 export const closeModal = (event) => {
@@ -164,7 +163,42 @@ export const createModalAddPhoto = () => {
 	inputPhoto.type = "file";
 	inputPhoto.name = "image";
 	inputPhoto.id = "image";
-	inputPhoto.setAttribute("data-js-photo", "true");
+
+	// Ajout du gestionnaire d'événements pour l'aperçu de l'image
+	inputPhoto.addEventListener("change", () => {
+		// Sélection avec data-attribute
+		const file = inputPhoto.files[0];
+
+		const maxSize = 4 * 1024 * 1024;
+
+		if (!file) {
+			alert("Veuillez sélectionner une image.");
+			return;
+		}
+
+		if (!["image/jpeg", "image/png"].includes(file.type)) {
+			alert("Le format du fichier n'est pas valide.");
+			return;
+		}
+		if (file.size > maxSize) {
+			alert("Le fichier est trop volumineux.");
+			return;
+		}
+
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = function (e) {
+				const imgPreview = new Image();
+				imgPreview.src = e.target.result;
+				imgPreview.alt = "Image preview";
+				// Effacer le contenu précédent de containerPhoto
+				containerPhoto.innerHTML = "";
+				containerPhoto.appendChild(imgPreview);
+			};
+			reader.readAsDataURL(file);
+		}
+		checkFields(); // Vérifier les champs après la sélection de l'image
+	});
 
 	const containerTitle = document.createElement("div");
 	containerTitle.classList.add("containerTitleCategory");
@@ -180,6 +214,7 @@ export const createModalAddPhoto = () => {
 
 	const containerCategory = document.createElement("div");
 	containerCategory.classList.add("containerTitleCategory");
+	containerCategory.classList.add("containerCategory");
 	const labelCategory = document.createElement("label");
 	labelCategory.htmlFor = "category";
 	labelCategory.textContent = "Catégorie";
@@ -199,6 +234,7 @@ export const createModalAddPhoto = () => {
 	btnSendNewPhoto.type = "submit";
 	btnSendNewPhoto.value = "Valider";
 	btnSendNewPhoto.classList.add("secondary");
+	btnSendNewPhoto.disabled = true;
 
 	formAddPhoto.appendChild(containerPhoto);
 	containerPhoto.appendChild(svgPhoto);
@@ -219,6 +255,26 @@ export const createModalAddPhoto = () => {
 	dialog.appendChild(formAddPhoto);
 
 	updateReturnArrow();
+
+	const checkFields = () => {
+		if (
+			inputPhoto.files.length > 0 &&
+			inputTitle.value.trim() !== "" &&
+			selectCategory.value !== "0"
+		) {
+			btnSendNewPhoto.disabled = false;
+			btnSendNewPhoto.classList.remove("secondary");
+			btnSendNewPhoto.classList.add("primary");
+		} else {
+			btnSendNewPhoto.disabled = true;
+			btnSendNewPhoto.classList.remove("primary");
+			btnSendNewPhoto.classList.add("secondary");
+		}
+	};
+
+	inputPhoto.addEventListener("change", checkFields);
+	inputTitle.addEventListener("input", checkFields);
+	selectCategory.addEventListener("change", checkFields);
 
 	formAddPhoto.addEventListener("submit", async (event) => {
 		event.preventDefault();

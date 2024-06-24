@@ -352,9 +352,13 @@ footer nav ul {
 .gallery-mini,
 .formAddPhoto {
 	display: flex;
-	border-bottom: 1px solid #b3b3b3;
 	margin: auto;
+}
+
+.gallery-mini,
+.formAddPhoto .containerCategory {
 	padding-bottom: 60px;
+	border-bottom: 1px solid #b3b3b3;
 }
 
 .gallery-mini {
@@ -439,6 +443,10 @@ footer nav ul {
 }
 .containerPhoto p {
 	font-size: 10px;
+}
+.containerPhoto img {
+	height: 100%;
+	object-fit: cover;
 }
 
 .containerTitleCategory {
