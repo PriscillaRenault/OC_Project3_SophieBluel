@@ -476,3 +476,6 @@ footer nav ul {
 .hidden {
 	display: none;
 }
+.show {
+	display: flex;
+}
