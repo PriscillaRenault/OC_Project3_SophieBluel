@@ -1,3 +1,7 @@
+// import { fetchWorks, fetchFilters } from "./api.js";
+// const works = await fetchWorks();
+// const filters = await fetchFilters();
+
 //Retrieve works from the API
 const reponse = await fetch("http://localhost:5678/api/works/");
 const works = await reponse.json();
