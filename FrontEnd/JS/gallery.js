@@ -1,4 +1,6 @@
-import { fetchWorks, fetchCategories } from "./api.js";
+// import { fetchWorks, fetchFilters } from "./api.js";
+// const works = await fetchWorks();
+// const filters = await fetchFilters();
 
 //Retrieve works from the API
 const works = await fetchWorks();

@@ -1,3 +1,6 @@
+// import { fetchWorks } from "./api.js";
+// const works = await fetchWorks();
+
 //Retrieve works from the API
 const reponse = await fetch("http://localhost:5678/api/works/");
 const works = await reponse.json();
