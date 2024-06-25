@@ -3,10 +3,12 @@
 // const filters = await fetchFilters();
 
 //Retrieve works from the API
-const works = await fetchWorks();
+const reponse = await fetch("http://localhost:5678/api/works/");
+const works = await reponse.json();
 
 //Retrieve filters gallery from the API
-const filters = await fetchCategories();
+const reponsefilter = await fetch("http://localhost:5678/api/categories/");
+const filters = await reponsefilter.json();
 
 // Create gallery
 function createGallery(works) {
