@@ -17,7 +17,7 @@ export const closeModal = (event) => {
 	dialog.classList.add("hidden");
 };
 
-// Fonction de base pour initialiser la modal
+// Fonction de base pour initialiser la modal with header
 export const baseModal = () => {
 	const dialog = document.querySelector("#js-dialog");
 	dialog.classList.remove("hidden");
@@ -110,7 +110,7 @@ export const createModalGallery = async () => {
 					updateMainGallery();
 				} else {
 					console.log(
-						`Error ${response.status} ${response.statusText}`
+						Error`${response.status} ${response.statusText}`
 					);
 				}
 			} catch (error) {
@@ -151,9 +151,17 @@ export const createModalAddPhoto = () => {
 
 	const containerPhoto = document.createElement("div");
 	containerPhoto.classList.add("containerPhoto");
+
+	// SVG initial
 	const svgPhoto = document.createElement("svg");
 	svgPhoto.classList.add("svgPhoto");
 	svgPhoto.innerHTML = '<i class="fa-regular fa-image"></i>';
+
+	// Image preview initialement cachée
+	const imgPreview = document.createElement("img");
+	imgPreview.classList.add("imgPreview");
+	imgPreview.classList.add("hidden");
+
 	const textSizePhoto = document.createElement("p");
 	textSizePhoto.textContent = "jpg, png : 4mo max";
 	const labelPhoto = document.createElement("label");
@@ -166,15 +174,8 @@ export const createModalAddPhoto = () => {
 
 	// Ajout du gestionnaire d'événements pour l'aperçu de l'image
 	inputPhoto.addEventListener("change", () => {
-		// Sélection avec data-attribute
 		const file = inputPhoto.files[0];
-
 		const maxSize = 4 * 1024 * 1024;
-
-		if (!file) {
-			alert("Veuillez sélectionner une image.");
-			return;
-		}
 
 		if (!["image/jpeg", "image/png"].includes(file.type)) {
 			alert("Le format du fichier n'est pas valide.");
@@ -184,20 +185,19 @@ export const createModalAddPhoto = () => {
 			alert("Le fichier est trop volumineux.");
 			return;
 		}
-
 		if (file) {
 			const reader = new FileReader();
 			reader.onload = function (e) {
-				const imgPreview = new Image();
 				imgPreview.src = e.target.result;
 				imgPreview.alt = "Image preview";
-				// Effacer le contenu précédent de containerPhoto
-				containerPhoto.innerHTML = "";
-				containerPhoto.appendChild(imgPreview);
+				imgPreview.classList.remove("hidden");
+				imgPreview.classList.add("show"); // Afficher l'aperçu de l'image
+				svgPhoto.classList.add("hidden");
+				labelPhoto.classList.add("hidden");
+				textSizePhoto.classList.add("hidden"); // Masquer le SVG
 			};
 			reader.readAsDataURL(file);
 		}
-		checkFields(); // Vérifier les champs après la sélection de l'image
 	});
 
 	const containerTitle = document.createElement("div");
@@ -226,8 +226,7 @@ export const createModalAddPhoto = () => {
         <option value="0"></option>
         <option value="1">Objets</option>
         <option value="2">Appartements</option>
-        <option value="3">Hotels et restaurants</option>
-    `;
+        <option value="3">Hotels et restaurants</option>`;
 	selectCategory.classList.add("inputTitleCategory");
 
 	const btnSendNewPhoto = document.createElement("input");
@@ -238,6 +237,7 @@ export const createModalAddPhoto = () => {
 
 	formAddPhoto.appendChild(containerPhoto);
 	containerPhoto.appendChild(svgPhoto);
+	containerPhoto.appendChild(imgPreview);
 	containerPhoto.appendChild(labelPhoto);
 	containerPhoto.appendChild(inputPhoto);
 	containerPhoto.appendChild(textSizePhoto);
@@ -279,5 +279,6 @@ export const createModalAddPhoto = () => {
 	formAddPhoto.addEventListener("submit", async (event) => {
 		event.preventDefault();
 		await checkFormAddPhoto();
+		updateMainGallery();
 	});
 };

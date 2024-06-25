@@ -327,6 +327,7 @@ footer nav ul {
 	gap: 8px;
 	margin-bottom: 2.3em;
 	cursor: pointer;
+	z-index: 4;
 }
 
 /* ----- modale -----*/
