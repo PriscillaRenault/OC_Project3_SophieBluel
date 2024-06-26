@@ -32,7 +32,7 @@ createGallery(works);
 // Create filters buttons
 function createFilters(filters) {
 	const filter = document.querySelector("#js-filters");
-	filters.unshift({ id: 0, name: "All" });
+	filters.unshift({ id: 0, name: "Tous" });
 	for (let i = 0; i < filters.length; i++) {
 		const category = filters[i];
 		const filterElement = document.createElement("button");

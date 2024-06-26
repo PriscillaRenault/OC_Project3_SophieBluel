@@ -175,6 +175,7 @@ const createFormAddPhoto = () => {
 	formAddPhoto.appendChild(btnSendNewPhoto);
 
 	formAddPhoto.addEventListener("submit", async (event) => {
+		checkFields();
 		event.preventDefault();
 		await checkFormAddPhoto();
 		updateMainGallery();
@@ -197,42 +198,67 @@ const createContainerPhoto = () => {
 
 	const textSizePhoto = document.createElement("p");
 	textSizePhoto.textContent = "jpg, png : 4mo max";
+
 	const labelPhoto = document.createElement("label");
 	labelPhoto.htmlFor = "image";
 	labelPhoto.textContent = "+ Ajouter photo";
+
 	const inputPhoto = document.createElement("input");
 	inputPhoto.type = "file";
 	inputPhoto.name = "image";
 	inputPhoto.id = "image";
+	inputPhoto.required = true;
+	inputPhoto.accept = "image/jpeg, image/png";
 
-	// Check if the file is an image and if it's not too big and show the preview
-	inputPhoto.addEventListener("change", () => {
+	const maxSize = 4 * 1024 * 1024; // 4 Mo
+
+	// Fonction pour cacher la prévisualisation de l'image
+	const hideImagePreview = () => {
+		imgPreview.classList.add("hidden");
+		imgPreview.classList.remove("show");
+		svgPhoto.classList.remove("hidden");
+		labelPhoto.classList.remove("hidden");
+		textSizePhoto.classList.remove("hidden");
+		imgPreview.src = ""; // Réinitialise l'URL de l'image
+	};
+
+	// Vérifie si le fichier est une image et s'il n'est pas trop gros, puis affiche la prévisualisation
+	const handleChange = () => {
 		const file = inputPhoto.files[0];
-		const maxSize = 4 * 1024 * 1024;
-
-		if (!["image/jpeg", "image/png"].includes(file.type)) {
-			alert("Le format du fichier n'est pas valide.");
-			return;
-		}
-		if (file.size > maxSize) {
-			alert("Le fichier est trop volumineux.");
-			return;
-		}
 		if (file) {
-			const reader = new FileReader();
-			reader.onload = function (e) {
-				imgPreview.src = e.target.result;
-				imgPreview.alt = "Image preview";
-				imgPreview.classList.remove("hidden");
-				imgPreview.classList.add("show");
-				svgPhoto.classList.add("hidden");
-				labelPhoto.classList.add("hidden");
-				textSizePhoto.classList.add("hidden");
-			};
-			reader.readAsDataURL(file);
+			if (file.type === "image/jpeg" || file.type === "image/png") {
+				if (file.size <= maxSize) {
+					const reader = new FileReader();
+					reader.onload = function (e) {
+						imgPreview.src = e.target.result;
+						imgPreview.alt = "Image preview";
+						imgPreview.classList.remove("hidden");
+						imgPreview.classList.add("show");
+						svgPhoto.classList.add("hidden");
+						labelPhoto.classList.add("hidden");
+						textSizePhoto.classList.add("hidden");
+					};
+					reader.readAsDataURL(file);
+				} else {
+					// Afficher une alerte si le fichier est trop volumineux
+					alert(
+						"Le fichier est trop volumineux. Veuillez sélectionner un fichier de taille inférieure à 4 Mo."
+					);
+					hideImagePreview();
+				}
+			} else {
+				// Afficher une alerte si le fichier n'est pas au bon format
+				alert("Le fichier doit être au format JPEG ou PNG.");
+				hideImagePreview();
+			}
+		} else {
+			hideImagePreview(); // Cache la prévisualisation si aucun fichier n'est sélectionné
 		}
-		checkFields();
-	});
+		checkFields(); // Vérifie les champs après chaque changement de fichier
+	};
+
+	// Écoute l'événement change de inputPhoto
+	inputPhoto.addEventListener("change", handleChange);
 
 	containerPhoto.appendChild(svgPhoto);
 	containerPhoto.appendChild(imgPreview);
@@ -242,6 +268,7 @@ const createContainerPhoto = () => {
 
 	return containerPhoto;
 };
+
 //create input title
 const createContainerTitle = () => {
 	const containerTitle = document.createElement("div");
@@ -257,8 +284,9 @@ const createContainerTitle = () => {
 	inputTitle.name = "title";
 	inputTitle.id = "title";
 	inputTitle.classList.add("inputTitleCategory");
+	inputTitle.required = true;
 
-	inputTitle.addEventListener("input", checkFields);
+	inputTitle.addEventListener("change", checkFields);
 
 	containerTitle.appendChild(labelTitle);
 	containerTitle.appendChild(inputTitle);
@@ -276,12 +304,14 @@ const createContainerCategory = () => {
 	labelCategory.htmlFor = "category";
 	labelCategory.textContent = "Catégorie";
 	labelCategory.classList.add("labelTitleCategory");
+	labelCategory.required = true;
 
 	const selectCategory = document.createElement("select");
 	selectCategory.name = "category";
 	selectCategory.id = "category";
 	selectCategory.innerHTML = `
-        <option value="0"></option>
+        <option>
+		</option>
         <option value="1">Objets</option>
         <option value="2">Appartements</option>
         <option value="3">Hotels et restaurants</option>
@@ -303,21 +333,57 @@ const createBtnSendNewPhoto = () => {
 	btnSendNewPhoto.value = "Valider";
 	btnSendNewPhoto.classList.add("secondary");
 	btnSendNewPhoto.disabled = true;
+	btnSendNewPhoto.id = "btnSendNewPhoto";
 
 	return btnSendNewPhoto;
 };
 //function to check if all fields are filled to enable the button send
 const checkFields = () => {
-	const inputPhoto = document.querySelector("#image");
 	const inputTitle = document.querySelector("#title");
+	const inputPhoto = document.querySelector("#image");
 	const selectCategory = document.querySelector("#category");
-	const btnSendNewPhoto = document.querySelector(".secondary");
+	const btnSendNewPhoto = document.querySelector("#btnSendNewPhoto");
+	const file = inputPhoto.files[0];
+	const maxSize = 4 * 1024 * 1024; // 4 Mo
 
-	if (
-		inputPhoto.files.length > 0 &&
-		inputTitle.value.trim() !== "" &&
-		selectCategory.value !== "0"
-	) {
+	let valid = true;
+
+	// Vérification du titre
+	if (!inputTitle.value.trim()) {
+		valid = false;
+		inputTitle.setCustomValidity("Le titre est requis.");
+	} else {
+		inputTitle.setCustomValidity(""); // Réinitialise le message de validation
+	}
+	inputTitle.reportValidity();
+
+	// Vérification de la photo
+	if (!file || !(file.type === "image/jpeg" || file.type === "image/png")) {
+		valid = false;
+		inputPhoto.setCustomValidity(
+			"Le fichier doit être au format JPG ou PNG."
+		);
+	} else if (file.size > maxSize) {
+		valid = false;
+		inputPhoto.setCustomValidity(
+			"La taille du fichier dépasse la limite de 4 Mo."
+		);
+	} else {
+		inputPhoto.setCustomValidity(""); // Réinitialise le message de validation
+	}
+	inputPhoto.reportValidity();
+
+	// Vérification de la catégorie
+	if (!selectCategory.value) {
+		valid = false;
+		selectCategory.setCustomValidity("Veuillez choisir une catégorie.");
+	} else {
+		selectCategory.setCustomValidity(""); // Réinitialise le message de validation
+	}
+	selectCategory.reportValidity();
+
+	// Mise à jour du bouton
+	if (valid) {
 		btnSendNewPhoto.disabled = false;
 		btnSendNewPhoto.classList.remove("secondary");
 		btnSendNewPhoto.classList.add("primary");
