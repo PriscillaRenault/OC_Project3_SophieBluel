@@ -1,6 +1,6 @@
 import { closeModal } from "./modal.js";
 
-export const fetchCategories = async () => {
+export const fetchFilters = async () => {
 	const response = await fetch("http://localhost:5678/api/categories/");
 	return await response.json();
 };

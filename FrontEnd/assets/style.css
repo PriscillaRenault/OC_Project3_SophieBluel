@@ -136,23 +136,44 @@ table {
 }
 /** end reset css**/
 body {
-	max-width: 1140px;
-	margin: auto;
+	max-width: 100%;
+	margin: 0 auto;
 	font-family: "Work Sans";
 	font-size: 14px;
 	background-color: #fffef8;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
-
 .grid {
+	width: 100%;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
 	height: 100vh;
+	place-items: center;
 }
+
+header,
+main,
+footer {
+	max-width: 1140px;
+}
+
 header {
 	display: flex;
 	justify-content: space-between;
+	width: 100%;
+	padding: 0 20px;
 	margin: 50px 0;
 }
+
+footer {
+	display: flex;
+	justify-content: flex-end;
+	width: 100%;
+	padding: 0 20px;
+}
+
 section {
 	margin: 50px auto;
 	max-width: 75%;
@@ -256,11 +277,14 @@ li:hover {
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
+	margin-top: 30px;
 }
 
 .gallery img {
 	width: 100%;
 }
+
+/* forms contact connection*/
 .forms {
 	width: 30%;
 	margin: auto;
@@ -297,6 +321,12 @@ li:hover {
 	text-align: center;
 }
 
+.login {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
 input[type="submit"] {
 	font-family: "Syne";
 	font-weight: 700;
@@ -316,7 +346,8 @@ footer nav ul {
 }
 
 /* ----- Edition mode-----*/
-.edition {
+#edition {
+	width: 100%;
 	background-color: black;
 	color: white;
 	font-size: 16px;
@@ -344,7 +375,7 @@ footer nav ul {
 
 /* ----- modale -----*/
 .dialog {
-	margin: 50px auto;
+	margin: auto;
 	width: 630px;
 	height: 688px;
 	border: 0px solid transparent;
@@ -352,6 +383,17 @@ footer nav ul {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
+}
+.headerModal {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.xmark {
+	color: black;
+	font-size: 16px;
+	align-self: flex-end;
+	padding: 20px;
 }
 .dialog h2 {
 	text-align: center;
@@ -361,19 +403,16 @@ footer nav ul {
 	color: black;
 	margin-top: 20px 0;
 }
-
-.gallery-mini,
-.formAddPhoto {
-	display: flex;
-	margin: auto;
-}
-
 .gallery-mini,
 .formAddPhoto .containerCategory {
 	padding-bottom: 60px;
 	border-bottom: 1px solid #b3b3b3;
 }
-
+.gallery-mini,
+.formAddPhoto {
+	display: flex;
+	margin: auto;
+}
 .gallery-mini {
 	flex-direction: row;
 	justify-content: start;
@@ -385,42 +424,26 @@ footer nav ul {
 	width: calc((100% / 5)-25px);
 	position: relative;
 }
-
 .gallery-mini figure .trashIcon {
 	position: absolute;
 	top: 5px;
 	right: 5px;
 }
-
 .gallery-mini img {
 	width: 76px;
 	height: 102px;
 	object-fit: cover;
 }
-
 .trashIcon {
 	color: white;
 	background-color: black;
 	border-radius: 15%;
 	font-size: 10px;
 	padding: 0.3em;
-
 	cursor: pointer;
 }
 
-.headerModal {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.xmark {
-	color: black;
-	font-size: 16px;
-	align-self: flex-end;
-	padding: 20px;
-}
-
+/* Add project */
 .formAddPhoto {
 	flex-direction: column;
 	justify-content: center;

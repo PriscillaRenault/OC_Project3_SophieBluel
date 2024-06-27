@@ -136,6 +136,7 @@ const handleDelete = async (event) => {
 		console.log(`Error ${response.status} ${response.statusText}`);
 	}
 };
+
 // update main gallery on window
 const updateMainGallery = async () => {
 	const gallery = document.querySelector("#js-gallery");
@@ -212,17 +213,17 @@ const createContainerPhoto = () => {
 
 	const maxSize = 4 * 1024 * 1024; // 4 Mo
 
-	// Fonction pour cacher la prévisualisation de l'image
+	// hide image preview
 	const hideImagePreview = () => {
 		imgPreview.classList.add("hidden");
 		imgPreview.classList.remove("show");
 		svgPhoto.classList.remove("hidden");
 		labelPhoto.classList.remove("hidden");
 		textSizePhoto.classList.remove("hidden");
-		imgPreview.src = ""; // Réinitialise l'URL de l'image
+		imgPreview.src = "";
 	};
 
-	// Vérifie si le fichier est une image et s'il n'est pas trop gros, puis affiche la prévisualisation
+	// handle change event on inputPhoto
 	const handleChange = () => {
 		const file = inputPhoto.files[0];
 		if (file) {
@@ -240,24 +241,21 @@ const createContainerPhoto = () => {
 					};
 					reader.readAsDataURL(file);
 				} else {
-					// Afficher une alerte si le fichier est trop volumineux
 					alert(
 						"Le fichier est trop volumineux. Veuillez sélectionner un fichier de taille inférieure à 4 Mo."
 					);
 					hideImagePreview();
 				}
 			} else {
-				// Afficher une alerte si le fichier n'est pas au bon format
 				alert("Le fichier doit être au format JPEG ou PNG.");
 				hideImagePreview();
 			}
 		} else {
-			hideImagePreview(); // Cache la prévisualisation si aucun fichier n'est sélectionné
+			hideImagePreview();
 		}
-		checkFields(); // Vérifie les champs après chaque changement de fichier
+		checkFields();
 	};
 
-	// Écoute l'événement change de inputPhoto
 	inputPhoto.addEventListener("change", handleChange);
 
 	containerPhoto.appendChild(svgPhoto);
@@ -340,49 +338,32 @@ const createBtnSendNewPhoto = () => {
 //function to check if all fields are filled to enable the button send
 const checkFields = () => {
 	const inputTitle = document.querySelector("#title");
-	const inputPhoto = document.querySelector("#image");
 	const selectCategory = document.querySelector("#category");
 	const btnSendNewPhoto = document.querySelector("#btnSendNewPhoto");
-	const file = inputPhoto.files[0];
-	const maxSize = 4 * 1024 * 1024; // 4 Mo
 
 	let valid = true;
 
-	// Vérification du titre
+	// Reset custom validity messages
+	inputTitle.setCustomValidity("");
+	selectCategory.setCustomValidity("");
+
+	// Check Title
 	if (!inputTitle.value.trim()) {
 		valid = false;
 		inputTitle.setCustomValidity("Le titre est requis.");
-	} else {
-		inputTitle.setCustomValidity(""); // Réinitialise le message de validation
 	}
-	inputTitle.reportValidity();
 
-	// Vérification de la photo
-	if (!file || !(file.type === "image/jpeg" || file.type === "image/png")) {
-		valid = false;
-		inputPhoto.setCustomValidity(
-			"Le fichier doit être au format JPG ou PNG."
-		);
-	} else if (file.size > maxSize) {
-		valid = false;
-		inputPhoto.setCustomValidity(
-			"La taille du fichier dépasse la limite de 4 Mo."
-		);
-	} else {
-		inputPhoto.setCustomValidity(""); // Réinitialise le message de validation
-	}
-	inputPhoto.reportValidity();
-
-	// Vérification de la catégorie
+	// Check Category
 	if (!selectCategory.value) {
 		valid = false;
 		selectCategory.setCustomValidity("Veuillez choisir une catégorie.");
-	} else {
-		selectCategory.setCustomValidity(""); // Réinitialise le message de validation
 	}
-	selectCategory.reportValidity();
 
-	// Mise à jour du bouton
+	// Report validity messages after all checks
+	selectCategory.reportValidity();
+	inputTitle.reportValidity();
+
+	// Update button state
 	if (valid) {
 		btnSendNewPhoto.disabled = false;
 		btnSendNewPhoto.classList.remove("secondary");

@@ -1,14 +1,14 @@
-// import { fetchWorks, fetchFilters } from "./api.js";
-// const works = await fetchWorks();
-// const filters = await fetchFilters();
+import { fetchWorks, fetchFilters } from "./api.js";
+const works = await fetchWorks();
+const filters = await fetchFilters();
 
-//Retrieve works from the API
-const reponse = await fetch("http://localhost:5678/api/works/");
-const works = await reponse.json();
+// //Retrieve works from the API
+// const reponse = await fetch("http://localhost:5678/api/works/");
+// const works = await reponse.json();
 
-//Retrieve filters gallery from the API
-const reponsefilter = await fetch("http://localhost:5678/api/categories/");
-const filters = await reponsefilter.json();
+// //Retrieve filters gallery from the API
+// const reponsefilter = await fetch("http://localhost:5678/api/categories/");
+// const filters = await reponsefilter.json();
 
 // Create gallery
 function createGallery(works) {
