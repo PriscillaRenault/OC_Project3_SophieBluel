@@ -175,6 +175,7 @@ const createFormAddPhoto = () => {
 	formAddPhoto.appendChild(containerCategory);
 	formAddPhoto.appendChild(btnSendNewPhoto);
 
+	// Listen to the submit event on the form add photo
 	formAddPhoto.addEventListener("submit", async (event) => {
 		checkFields();
 		event.preventDefault();
