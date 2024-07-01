@@ -1,6 +1,7 @@
 const email = document.querySelector("#js-email");
 const password = document.querySelector("#js-password");
 
+// call the API to connect the user
 document
 	.querySelector("#js-btnConnect")
 	.addEventListener("click", async (e) => {
@@ -17,7 +18,8 @@ document
 			}),
 		});
 
-		// Vérifiez le statut de la réponse
+		// If the HTTP response is not successful,
+		//display the error
 		if (!response.ok) {
 			console.error(
 				`HTTP error! status: ${response.status}, text: ${response.statusText}`
@@ -27,7 +29,7 @@ document
 		}
 
 		const data = await response.json();
-
+		// If the server response contains an error
 		if (data.error) {
 			alert("E-mail ou mot de passe incorrect");
 		} else {

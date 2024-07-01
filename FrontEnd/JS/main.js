@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	openModal.addEventListener("click", async (event) => {
 		event.preventDefault();
 		dialog.showModal();
-		await createModalGallery(); // Attendez que la galerie soit créée avant de poursuivre
+		await createModalGallery();
 	});
 
 	window.addEventListener("click", (event) => {
